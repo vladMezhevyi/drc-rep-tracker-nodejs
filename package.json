@@ -1,0 +1,34 @@
+{
+  "name": "drc-rep-tracker-nodejs",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx watch --env-file=.env src/index.ts"
+  },
+  "author": "Vladyslav Mezhevyi",
+  "license": "MIT",
+  "description": "Drc Rep Tracker Backend Application",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "winston": "^3.17.0",
+    "zod": "^4.0.17"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.2.1",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.1"
+  }
+}
