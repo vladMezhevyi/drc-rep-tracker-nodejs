@@ -16,7 +16,8 @@
       "@types/node",
       "@types/express",
       "@types/cors",
-      "@types/cookie-parser"
+      "@types/cookie-parser",
+      "@types/morgan"
     ],
     "incremental": true
   },
