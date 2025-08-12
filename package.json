@@ -10,6 +10,7 @@
   "license": "MIT",
   "description": "Drc Rep Tracker Backend Application",
   "dependencies": {
+    "@supabase/supabase-js": "^2.55.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.1.0",
