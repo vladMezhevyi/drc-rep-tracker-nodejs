@@ -1,5 +1,4 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { DatabaseError, HttpError } from '../common/http-error';
 
 class SupabaseService {
   private _client: SupabaseClient;
@@ -8,12 +7,8 @@ class SupabaseService {
     const url: string | undefined = process.env.SUPABASE_URL;
     const key: string | undefined = process.env.SUPABASE_KEY;
 
-    if (!url) {
-      throw new HttpError('Supabase project url is missing in .env', 500);
-    }
-
-    if (!key) {
-      throw new HttpError('Supabase project key is missing in .env', 500);
+    if (!url || !key) {
+      throw new Error('Failed to connect DB');
     }
 
     this._client = createClient(url, key);

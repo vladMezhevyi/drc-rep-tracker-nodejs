@@ -1,15 +1,22 @@
 import { AuthError } from '@supabase/supabase-js';
-import { ZodError } from 'zod';
+import { ErrorCodes, ErrorData } from '../types/error.type';
 
 export class HttpError extends Error {
-  public readonly statusCode: number;
-  public readonly details?: unknown;
+  public readonly code: ErrorCodes;
+  public readonly status: number;
+  public readonly data: ErrorData;
 
-  constructor(message: string, statusCode: number = 500, details?: unknown) {
+  constructor(
+    message: string,
+    status: number,
+    code: ErrorCodes = ErrorCodes.InternalError,
+    data: ErrorData = {}
+  ) {
     super(message);
 
-    this.statusCode = statusCode;
-    this.details = details;
+    this.status = status;
+    this.code = code;
+    this.data = data;
 
     // This makes `error instanceof HttpError` (and subclasses like UnauthorizedError) work as expected.
     Object.setPrototypeOf(this, new.target.prototype);
@@ -21,40 +28,29 @@ export class HttpError extends Error {
   }
 }
 
-export class BadRequestError extends HttpError {
-  constructor(message: string = 'Bad Request', details?: unknown) {
-    super(message, 400, details);
+export class ValidationError extends HttpError {
+  constructor(data: ErrorData) {
+    super('Validation Failed', 400, ErrorCodes.ValidationError, data);
   }
 }
 
-export class UnauthorizedError extends HttpError {
-  constructor(message: string = 'Unauthorized', details?: unknown) {
-    super(message, 401, details);
+export class BadRequestError extends HttpError {
+  constructor() {
+    super('Bad Request', 400, ErrorCodes.BadRequestError);
   }
 }
 
 export class DatabaseError extends HttpError {
-  constructor(dbError: AuthError, message: string = 'Something went wrong', details?: unknown) {
-    super(message, dbError.status || 500, details);
-
-    if (process.env.NODE_ENV === 'development') {
-      console.error(dbError.message);
-    }
+  constructor(error: AuthError) {
+    super(
+      process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong',
+      error.status || 500
+    );
   }
 }
 
-export class HttpAuthError extends HttpError {
-  constructor(dbError: AuthError, message?: string, details?: unknown) {
-    super(message || dbError.message || 'Something went wrong', dbError.status || 500, details);
-
-    if (process.env.NODE_ENV === 'development') {
-      console.error(dbError.message);
-    }
-  }
-}
-
-export class ValidationError extends BadRequestError {
-  constructor(zodError: ZodError) {
-    super('Validation failed', zodError.issues);
+export class InternalError extends HttpError {
+  constructor() {
+    super('Something went wrong', 500, ErrorCodes.InternalError);
   }
 }

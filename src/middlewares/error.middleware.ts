@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { ErrorResponse } from '../types/error.type';
-import { BadRequestError, HttpError, ValidationError } from '../common/http-error';
+import { DatabaseError, HttpError, InternalError, ValidationError } from '../common/http-error';
+import { isAuthApiError } from '@supabase/supabase-js';
 
 export const errorMiddleware = (
   err: unknown,
@@ -12,23 +13,22 @@ export const errorMiddleware = (
   let httpError: HttpError;
 
   if (err instanceof ZodError) {
-    httpError = new ValidationError(err);
+    httpError = new ValidationError(err.issues);
+  } else if (isAuthApiError(err)) {
+    httpError = new DatabaseError(err);
   } else if (err instanceof HttpError) {
     httpError = err;
-  } else if (err instanceof SyntaxError) {
-    httpError = new BadRequestError();
   } else {
-    httpError = new HttpError('Internal Server Error', 500);
+    httpError = new InternalError();
   }
 
   const response: ErrorResponse = {
     success: false,
-    statusCode: httpError.statusCode,
-    error: httpError.message,
-    details: httpError.details
+    message: httpError.message,
+    code: httpError.code,
+    status: httpError.status,
+    data: httpError.data
   };
 
-  console.error(err);
-
-  res.status(httpError.statusCode).json(response);
+  res.status(httpError.status).json(response);
 };

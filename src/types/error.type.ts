@@ -1,6 +1,15 @@
+export enum ErrorCodes {
+  InternalError = 'INTERNAL_ERROR',
+  ValidationError = 'VALIDATION_ERROR',
+  BadRequestError = 'BAD_REQUEST'
+}
+
+export type ErrorData = Record<string, any>;
+
 export interface ErrorResponse {
   success: false;
-  statusCode: number;
-  error: string;
-  details?: unknown;
+  status: number;
+  message: string;
+  code: ErrorCodes;
+  data?: ErrorData;
 }

@@ -2,7 +2,7 @@ import { AuthResponse } from '@supabase/supabase-js';
 import { supabase } from '../configs/database.config';
 import { SignupInput, SignupResponse } from '../schemas/auth.schema';
 import bcrypt from 'bcrypt';
-import { HttpAuthError } from '../common/http-error';
+import { DatabaseError, InternalError } from '../common/http-error';
 
 class AuthService {
   public signup = async (input: SignupInput): Promise<SignupResponse> => {
@@ -10,50 +10,37 @@ class AuthService {
 
     const passwordHash: string = await bcrypt.hash(password, 10);
 
-    const authResponse: AuthResponse = await supabase.auth.signUp({
+    const { data, error }: AuthResponse = await supabase.auth.signUp({
       email,
-      password: passwordHash
+      password: passwordHash,
+      options: {
+        data: {
+          username
+        }
+      }
     });
 
-    if (authResponse.error) {
-      throw new HttpAuthError(authResponse.error);
+    if (error) {
+      throw new DatabaseError(error);
     }
 
-    if (!authResponse.data.session) {
-      throw new Error('No session');
-    }
-
-    if (!authResponse.data.user || !authResponse.data.user.email) {
-      throw new Error('No User');
-    }
-
-    const user = {
-      id: authResponse.data.user.id,
-      email,
-      username,
-      created_at: authResponse.data.user.created_at,
-      updated_at: authResponse.data.user.updated_at
-    };
-
-    const userData = await supabase.from('users').insert(user);
-
-    if (userData.error) {
-      throw userData.error;
+    if (!data.session || !data.user) {
+      throw new InternalError();
     }
 
     return {
       session: {
-        accessToken: authResponse.data.session.access_token,
-        refreshToken: authResponse.data.session.refresh_token,
-        expiresAt: authResponse.data.session.expires_at,
-        expiresIn: authResponse.data.session.expires_in
+        accessToken: data.session.access_token,
+        refreshToken: data.session.refresh_token,
+        expiresAt: data.session.expires_at,
+        expiresIn: data.session.expires_in
       },
       user: {
-        username,
-        email,
-        id: authResponse.data.user.id,
-        createdAt: authResponse.data.user.created_at,
-        updatedAt: authResponse.data.user.updated_at
+        id: data.user.id,
+        email: data.user.email!,
+        username: data.user.user_metadata.username,
+        createdAt: data.user.created_at,
+        updatedAt: data.user.updated_at
       }
     };
   };
