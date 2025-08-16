@@ -12,3 +12,7 @@ export interface Session {
   expiresIn: number;
   expiresAt: number | undefined;
 }
+
+export interface AuthenticatedRequest extends Request {
+  user: User;
+}

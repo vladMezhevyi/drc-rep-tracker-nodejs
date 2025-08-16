@@ -1,7 +1,8 @@
 export enum ErrorCode {
   InternalError = 'INTERNAL_ERROR',
   ValidationError = 'VALIDATION_ERROR',
-  BadRequestError = 'BAD_REQUEST'
+  BadRequestError = 'BAD_REQUEST',
+  UnauthorizedError = 'UNAUTHORIZED_ERROR'
 }
 
 export type ErrorData = Record<string, any>;

@@ -40,6 +40,12 @@ export class BadRequestError extends HttpError {
   }
 }
 
+export class UnauthorizedError extends HttpError {
+  constructor(message: string = 'Unauthorized') {
+    super(message, 401, ErrorCode.UnauthorizedError);
+  }
+}
+
 export class DatabaseError extends HttpError {
   constructor(error: AuthError) {
     super(
