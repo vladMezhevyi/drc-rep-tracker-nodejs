@@ -17,7 +17,8 @@
       "@types/express",
       "@types/cors",
       "@types/cookie-parser",
-      "@types/morgan"
+      "@types/morgan",
+      "@types/bcrypt"
     ],
     "incremental": true
   },
