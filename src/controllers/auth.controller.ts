@@ -19,7 +19,11 @@ class AuthController {
     this.setRefreshTokenCookie(res, response.session.refreshToken);
 
     res.status(201).json({
-      accessToken: response.session.accessToken,
+      session: {
+        accessToken: response.session.accessToken,
+        expiresIn: response.session.expiresIn,
+        expiresAt: response.session.expiresAt
+      },
       user: response.user
     });
   };
@@ -31,7 +35,11 @@ class AuthController {
     this.setRefreshTokenCookie(res, response.session.refreshToken);
 
     res.status(200).json({
-      accessToken: response.session.accessToken,
+      session: {
+        accessToken: response.session.accessToken,
+        expiresIn: response.session.expiresIn,
+        expiresAt: response.session.expiresAt
+      },
       user: response.user
     });
   };
@@ -47,7 +55,11 @@ class AuthController {
     this.setRefreshTokenCookie(res, response.session.refreshToken);
 
     res.status(200).json({
-      accessToken: response.session.accessToken,
+      session: {
+        accessToken: response.session.accessToken,
+        expiresIn: response.session.expiresIn,
+        expiresAt: response.session.expiresAt
+      },
       user: response.user
     });
   };
@@ -64,7 +76,7 @@ class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      path: '/api/auth/refresh-token',
+      path: '/',
       maxAge: getMaxAge(7, 'days')
     });
   };
